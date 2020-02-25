@@ -26,9 +26,8 @@ public:
         rgbColor color;
     } EightBitLed;
 
-    APA102C(SPI_Handle spi, uint16_t numLeds);
+    APA102C(SPI_Handle spi, uint16_t ledCount);
 
-    void setNumLeds(uint16_t numLeds);
     void setBrightness(float brightness);
 
     void setLed(rgbColorFloat *color, uint16_t ledIndex);
@@ -37,7 +36,7 @@ public:
     void setAllLeds(FloatLed *led);
     void setAllLeds(rgbColorFloat *color);
 
-    FloatLed getLed(uint16_t ledIndex);
+    FloatLed *getLed(uint16_t ledIndex);
     EightBitLed getEightBitLed(uint16_t ledIndex);
 
     rgbColorFloat getLedColor(void);
@@ -49,7 +48,7 @@ public:
 private:
     SPI_Handle      spi;
     SPI_Transaction transaction;
-    uint16_t        numLeds;
+    uint16_t        ledCount;
     uint16_t        frameLength;
     FloatLed       *backBuffer;
     FloatLed       *captureBuffer;

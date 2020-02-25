@@ -1,25 +1,26 @@
 #include <apa102c.h>
 
-APA102C::APA102C(SPI_Handle s, uint16_t numLeds) {
-    spi = s;
-    setNumLeds(numLeds);
-    backBuffer = new FloatLed[numLeds];
-    captureBuffer = new FloatLed[numLeds];
-    outputBuffer = new EightBitLed[frameLength];
+APA102C::APA102C(SPI_Handle s, uint16_t c) {
+    spi      = s;
+    ledCount = c;
+
+    backBuffer    = new FloatLed[ledCount];
+    captureBuffer = new FloatLed[ledCount];
+    outputBuffer  = new EightBitLed[ledCount+2];
+
     memcpy(outputBuffer, &frameStart, sizeof(EightBitLed));
-    memcpy(outputBuffer+frameLength-1, &frameEnd, sizeof(EightBitLed));
+    memcpy(outputBuffer+ledCount+1, &frameEnd, sizeof(EightBitLed));
+
+    transaction.rxBuf = NULL;
+    transaction.count = (ledCount+2)*sizeof(outputBuffer);
+    transaction.txBuf = (void *) outputBuffer;
 }
 
 void APA102C::setBrightness(float b) {
     brightness = b;
-    for(uint16_t i = 0; i < numLeds; i++) {
+    for(uint16_t i = 0; i < ledCount; i++) {
         (backBuffer+i)->brightness = b;
     }
-}
-
-void APA102C::setNumLeds(uint16_t num) {
-    numLeds = num;
-    frameLength = numLeds+2;
 }
 
 void APA102C::setLed(FloatLed *led, uint16_t ledIndex) {
@@ -28,23 +29,23 @@ void APA102C::setLed(FloatLed *led, uint16_t ledIndex) {
 
 void APA102C::setLed(rgbColorFloat *c, uint16_t ledIndex) {
     FloatLed led = {brightness: brightness, color: *c};
-    memcpy(backBuffer+ledIndex, &led, sizeof(FloatLed));
+    setLed(&led, ledIndex);
 }
 
 void APA102C::setAllLeds(rgbColorFloat *c) {
-    for(uint16_t i = 0; i < numLeds; i++) {
-        setLed(c, i);
+    FloatLed led = {brightness: brightness, color: *c};
+    for(uint16_t i = 0; i < ledCount; i++) {
+        setLed(&led, i);
     }
 }
 
-APA102C::FloatLed APA102C::getLed(uint16_t ledIndex) {
-    FloatLed c = *(backBuffer+ledIndex);
-    return c;
+APA102C::FloatLed *APA102C::getLed(uint16_t ledIndex) {
+    return backBuffer+ledIndex;
 }
 
 APA102C::EightBitLed APA102C::getEightBitLed(uint16_t ledIndex) {
     FloatLed l = *(backBuffer+ledIndex);
-    uint8_t b = (uint8_t)(l.brightness*31) & 0x1f;
+    uint8_t b  = (uint8_t)(l.brightness*31) & 0x1f;
     EightBitLed led = {
          brightness: (uint8_t)(0xe0 | b),
          color: quantize(&l.color)
@@ -53,7 +54,7 @@ APA102C::EightBitLed APA102C::getEightBitLed(uint16_t ledIndex) {
 }
 
 void APA102C::capture() {
-    memcpy(captureBuffer, backBuffer, (numLeds*sizeof(*backBuffer)));
+    memcpy(captureBuffer, backBuffer, ledCount*sizeof(*backBuffer));
 }
 
 APA102C::FloatLed *APA102C::getCaptureBuffer() {
@@ -61,7 +62,7 @@ APA102C::FloatLed *APA102C::getCaptureBuffer() {
 }
 
 void APA102C::backBufferToOutputBuffer() {
-    for(uint16_t i = 0; i < numLeds; i++) {
+    for(uint16_t i = 0; i < ledCount; i++) {
         EightBitLed led = getEightBitLed(i);
         //output BGR - find a better way
         float red = led.color.red;
@@ -71,13 +72,7 @@ void APA102C::backBufferToOutputBuffer() {
     }
 }
 
-
-
 void APA102C::output() {
     backBufferToOutputBuffer();
-    SPI_Transaction transaction;
-    transaction.txBuf = (void *) outputBuffer;
-    transaction.rxBuf = NULL;
-    transaction.count = frameLength*4;
     SPI_transfer(spi, &transaction);
 }
