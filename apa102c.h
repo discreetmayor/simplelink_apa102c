@@ -11,6 +11,8 @@
 
 using namespace colorUtil;
 
+//#include <algorithm>
+
 class APA102C {
 public:
 

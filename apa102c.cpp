@@ -1,6 +1,5 @@
 #include <apa102c.h>
 
-
 APA102C::APA102C(SPI_Handle s, uint16_t numLeds) {
     spi = s;
     setNumLeds(numLeds);
@@ -13,6 +12,9 @@ APA102C::APA102C(SPI_Handle s, uint16_t numLeds) {
 
 void APA102C::setBrightness(float b) {
     brightness = b;
+    for(uint16_t i = 0; i < numLeds; i++) {
+        (backBuffer+i)->brightness = b;
+    }
 }
 
 void APA102C::setNumLeds(uint16_t num) {
@@ -60,9 +62,8 @@ APA102C::FloatLed *APA102C::getCaptureBuffer() {
 
 void APA102C::backBufferToOutputBuffer() {
     for(uint16_t i = 0; i < numLeds; i++) {
-        //worth writing directly to outputbuffer?
         EightBitLed led = getEightBitLed(i);
-        //output BGR
+        //output BGR - find a better way
         float red = led.color.red;
         led.color.red = led.color.blue;
         led.color.blue = red;
