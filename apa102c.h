@@ -42,6 +42,7 @@ public:
     rgbColorFloat getLedColor(void);
 
     void capture();
+    void capture(rgbColorFloat *c);
     FloatLed* getCaptureBuffer();
     void output();
 
@@ -55,7 +56,7 @@ private:
     EightBitLed    *outputBuffer;
     EightBitLed     frameStart[4] = {0x00, 0x00, 0x00, 0x00};
     EightBitLed     frameEnd[4]   = {0xff, 0xff, 0xff, 0xff};
-    float           brightness = INITIAL_BRIGHTNESS;
+    float           brightness    = INITIAL_BRIGHTNESS;
 
 
     void backBufferToOutputBuffer();

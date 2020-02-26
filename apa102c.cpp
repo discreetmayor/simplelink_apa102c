@@ -57,6 +57,13 @@ void APA102C::capture() {
     memcpy(captureBuffer, backBuffer, ledCount*sizeof(*backBuffer));
 }
 
+void APA102C::capture(rgbColorFloat *c) {
+    FloatLed led = {brightness: brightness, color: *c};
+    for(uint16_t i = 0; i < ledCount; i++) {
+        memcpy(captureBuffer+i, &led, sizeof(FloatLed));
+    }
+}
+
 APA102C::FloatLed *APA102C::getCaptureBuffer() {
     return captureBuffer;
 }
