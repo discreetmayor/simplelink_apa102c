@@ -1,3 +1,10 @@
+/*
+ * APA102C.h
+ *
+ *  Created on: Feb 24, 2020
+ *      Author: mh
+ */
+
 #include <stdint.h>
 #include <string.h>
 #include <ColorUtil.h>
@@ -10,8 +17,6 @@
 #define INITIAL_BRIGHTNESS 0.16
 
 using namespace colorUtil;
-
-//#include <algorithm>
 
 class APA102C {
 public:
@@ -27,6 +32,7 @@ public:
     } EightBitLed;
 
     APA102C(SPI_Handle spi, uint16_t ledCount);
+    virtual ~APA102C();
 
     void setBrightness(float brightness);
 

@@ -16,6 +16,12 @@ APA102C::APA102C(SPI_Handle s, uint16_t c) {
     transaction.txBuf = (void *) outputBuffer;
 }
 
+APA102C::~APA102C() {
+    delete(backBuffer);
+    delete(captureBuffer);
+    delete(outputBuffer);
+}
+
 void APA102C::setBrightness(float b) {
     brightness = b;
     for(uint16_t i = 0; i < ledCount; i++) {
