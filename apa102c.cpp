@@ -1,8 +1,20 @@
 #include <apa102c.h>
 
-APA102C::APA102C(SPI_Handle s, uint16_t c) {
-    spi      = s;
+APA102C::APA102C(uint_least8_t spiIndex, uint16_t c) {
     ledCount = c;
+
+    SPI_init();
+    SPI_Params spiParams;
+
+    SPI_Params_init(&spiParams);
+    spiParams.bitRate     = 1000000;
+    spiParams.dataSize    = 8;
+    spiParams.frameFormat = SPI_POL0_PHA0;
+
+    spi = SPI_open(spiIndex, &spiParams);
+    if (spi == NULL) {
+        while (1);
+    }
 
     backBuffer    = new FloatLed[ledCount];
     captureBuffer = new FloatLed[ledCount];

@@ -31,7 +31,7 @@ public:
         rgbColor color;
     } EightBitLed;
 
-    APA102C(SPI_Handle spi, uint16_t ledCount);
+    APA102C(uint_least8_t spiIndex, uint16_t ledCount);
     virtual ~APA102C();
 
     void setBrightness(float brightness);
