@@ -35,7 +35,7 @@ APA102C::~APA102C() {
 }
 
 void APA102C::setBrightness(float b) {
-    brightness = b;
+    brightness = b/31.0f;
     for(uint16_t i = 0; i < ledCount; i++) {
         (backBuffer+i)->brightness = b;
     }

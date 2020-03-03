@@ -13,7 +13,7 @@
 #ifndef APA102C_H_
 #define APA102C_H_
 
-#define BRIGHTNESS_MASK 0xe0
+#define BRIGHTNESS_MASK    0xe0
 #define INITIAL_BRIGHTNESS 0.16
 
 using namespace colorUtil;
