@@ -1,5 +1,6 @@
 # APA102C 
 A simple driver for APA102C LEDs using the TI SimpleLink platform.
+Includes CCS 9 project files.
 
 __How to use__ 
 
