@@ -29,6 +29,7 @@ APA102C::APA102C(uint_least8_t spiIndex, uint16_t c) {
 }
 
 APA102C::~APA102C() {
+    SPI_close(spi);
     delete(backBuffer);
     delete(captureBuffer);
     delete(outputBuffer);
@@ -89,7 +90,7 @@ APA102C::FloatLed *APA102C::getCaptureBuffer() {
 void APA102C::backBufferToOutputBuffer() {
     for(uint16_t i = 0; i < ledCount; i++) {
         EightBitLed led = getEightBitLed(i);
-        //output BGR - find a better way
+        // swap blue with red for apa102c output
         float red = led.color.red;
         led.color.red = led.color.blue;
         led.color.blue = red;

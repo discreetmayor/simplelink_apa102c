@@ -5,8 +5,6 @@
  *      Author: mh
  */
 
-#include <stdint.h>
-#include <string.h>
 #include <ColorUtil.h>
 #include <ti/drivers/SPI.h>
 
@@ -14,7 +12,7 @@
 #define APA102C_H_
 
 #define BRIGHTNESS_MASK    0xe0
-#define INITIAL_BRIGHTNESS 0.16
+#define INITIAL_BRIGHTNESS 1.0f
 
 using namespace colorUtil;
 
@@ -38,18 +36,16 @@ public:
 
     void setLed(rgbColorFloat *color, uint16_t ledIndex);
     void setLed(FloatLed *led, uint16_t ledIndex);
-
     void setAllLeds(FloatLed *led);
     void setAllLeds(rgbColorFloat *color);
 
     FloatLed *getLed(uint16_t ledIndex);
     EightBitLed getEightBitLed(uint16_t ledIndex);
-
     rgbColorFloat getLedColor(void);
 
     void capture();
     void capture(rgbColorFloat *c);
-    FloatLed* getCaptureBuffer();
+    FloatLed *getCaptureBuffer();
     void output();
 
 private:
@@ -63,7 +59,6 @@ private:
     EightBitLed     frameStart[4] = {0x00, 0x00, 0x00, 0x00};
     EightBitLed     frameEnd[4]   = {0xff, 0xff, 0xff, 0xff};
     float           brightness    = INITIAL_BRIGHTNESS;
-
 
     void backBufferToOutputBuffer();
 };
